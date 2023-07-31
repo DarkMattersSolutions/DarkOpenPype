@@ -1,6 +1,7 @@
 import os
 
 import bpy
+import math, random
 
 from openpype.pipeline import publish
 from openpype.hosts.blender.api import plugin
@@ -26,38 +27,25 @@ class MultiExporter(publish.Extractor):
 
         col_arr = ["_hehe", "_hihi", "hoho"]
 
-
+        selected = []
+        asset_group = None
 
         for collection in bpy.data.collections:
-            for col in col_arr:
-                #context = plugin.create_blender_context(active=asset_group, selected=plugin.get_selection())
-                name = collection.name
-                if col in name:
-                    for obj in bpy.data.collections[collection.name].all_objects:
-                        self.select_objects(obj)
-                        for obj in bpy.context.selected_objects:
-                            org_loc = obj.location.copy()
-                            print(obj)
+            if collection.name in col_arr:
+                selected.clear()
+                for obj in bpy.data.collections[collection.name].all_objects:
+                      selected.append(obj)
+                context = plugin.create_blender_context(active=asset_group, selected=selected)
 
-                            # Sends object to zero vectors.
-                            obj.location = (0,0,0)
-
-
-                            print("C BON")
-                else:
-                    print("C PAS BON")
-
-                # override = plugin.create_blender_context(
-                # active=asset, bpy.data.collections[collection.name].all_objects)
-               # bpy.ops.export_scene.fbx(filepath=f"C:/Users/DMS7/Desktop/{collection.name}.fbx", use_selection=True)
-                # bpy.ops.export_scene.fbx(
-                # bpy.context,
-                # filepath=f"C:/Users/DMS7/Desktop/{collection.name}.fbx",
-                # use_active_collection=False,
-                # use_selection=True,
-                # mesh_smooth_type='FACE',
-                # add_leaf_bones=False
-                # )
-                # obj.location = org_loc
-
-            bpy.ops.object.select_all(action='DESELECT')
+                filename = f"{collection.name}.fbx"
+                if not os.path.exists(instance.data['publishDir']):
+                     os.mkdir(instance.data['publishDir'])
+                filepath = os.path.join(instance.data['publishDir'], filename)
+                bpy.ops.export_scene.fbx(
+                context,
+                filepath=filepath,
+                use_active_collection=False,
+                use_selection=True,
+                mesh_smooth_type='FACE',
+                add_leaf_bones=False
+                )
