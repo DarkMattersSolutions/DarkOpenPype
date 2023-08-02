@@ -29,12 +29,18 @@ class MultiExporter(publish.Extractor):
 
         selected = []
         asset_group = None
+        obj_loc_array = []
 
         for collection in bpy.data.collections:
             if collection.name in col_arr:
                 selected.clear()
+
                 for obj in bpy.data.collections[collection.name].all_objects:
                       selected.append(obj)
+                      #Saving Object Original Position
+                      obj_data = {'OBJ' : obj, 'LOC' : (obj.location.x, obj.location.y, obj.location.z)}
+                      obj_loc_array.append(obj_data)
+                      obj.location = (0,0,0)
                 context = plugin.create_blender_context(active=asset_group, selected=selected)
 
                 filename = f"{collection.name}.fbx"
@@ -49,3 +55,8 @@ class MultiExporter(publish.Extractor):
                 mesh_smooth_type='FACE',
                 add_leaf_bones=False
                 )
+
+        #Restore Original Object Location
+        for obj_data in obj_loc_array:
+             x = bpy.data.objects[obj_data['OBJ'].name]
+             x.location = obj_data['LOC']
