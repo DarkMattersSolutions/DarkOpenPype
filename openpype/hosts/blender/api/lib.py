@@ -315,3 +315,32 @@ def maintained_time():
         yield
     finally:
         bpy.context.scene.frame_current = current_time
+
+def traverse_tree(t):
+    yield t
+    for child in t.children:
+        yield from traverse_tree(child)
+
+def parent_lookup(coll):
+    parent_lookup = {}
+    for coll in traverse_tree(coll):
+        for c in coll.children.keys():
+            parent_lookup.setdefault(c, coll.name)
+    return parent_lookup
+
+def get_collection_parent(collection, print_output = False):
+    if print_output:
+        print("-----------")
+    C = bpy.context
+    # Get all collections of the scene and their parents in a dict
+    coll_scene = C.scene.collection
+    coll_parents = parent_lookup(coll_scene)
+    #sub_coll = coll_scene.children.get("Collection")
+    if print_output:
+        print ("Parent of {} is {}".format(
+            collection.name,
+            coll_parents.get(collection.name))
+        )
+    if print_output:
+        print('-------PROCESSING NEW COLLEC-------')
+    return coll_parents.get(collection.name)
