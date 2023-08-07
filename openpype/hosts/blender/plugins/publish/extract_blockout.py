@@ -1,10 +1,10 @@
 import os
 
 import bpy
-import math, random
 
 from openpype.pipeline import publish
-from openpype.hosts.blender.api import plugin
+from openpype.hosts.blender.api import plugin, lib
+from openpype.modules.kitsu.utils import credentials as kitsu_cred
 from openpype.hosts.blender.api.pipeline import AVALON_PROPERTY
 
 
@@ -17,21 +17,23 @@ class ExtractBlockout(publish.Extractor):
     optional = True
 
     def process(self, instance):
-        print("------NEW------")
+        print("------BLOCKOUT EXTRACTION------")
         col_array = []
-        print("------COLLECTION CHECK------")
         for collection in bpy.data.collections:
-            if collection.name.startswith("blockout"):
-                print(collection.name)
+            if lib.get_collection_parent(collection) == "EXPORT":
                 obj_array = []
+                print(f"Collection {collection.name} is child of EXPORT exporting {collection.name}")
                 for obj in bpy.data.collections[collection.name].all_objects:
                     obj_array.append(obj.name)
                 collection_data = {'COLLECTION': collection.name, 'OBJECT' : obj_array}
                 col_array.append(collection_data)
-            else:
-                print("not a blockout collection")
-        print("------DATA------")
+
+        print("------BLOCKOUT EXTRACTEDDATA------")
         for collection_data in col_array:
             print("OBJ DATA = ", collection_data['COLLECTION'])
             print("OBJ DATA = ", collection_data['OBJECT'])
             print("OBJ DATA SET ", collection_data)
+
+        #print("KITSU PROJECT ", kitsu_cred.gazu.project.all_projects())
+        print("project = ", os.environ['AVALON_PROJECT'])
+        print('-----------------')

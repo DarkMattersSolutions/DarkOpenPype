@@ -335,7 +335,6 @@ def get_collection_parent(collection, print_output = False):
     # Get all collections of the scene and their parents in a dict
     coll_scene = C.scene.collection
     coll_parents = parent_lookup(coll_scene)
-    #sub_coll = coll_scene.children.get("Collection")
     if print_output:
         print ("Parent of {} is {}".format(
             collection.name,

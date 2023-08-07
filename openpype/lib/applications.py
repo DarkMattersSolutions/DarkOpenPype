@@ -1167,6 +1167,7 @@ class ApplicationLaunchContext:
         # Windows and MacOS have easier process start
         low_platform = platform.system().lower()
         if low_platform in ("windows", "darwin"):
+            self.log.debug(f"HERE LAUNCHING {self.launch_args}")
             return subprocess.Popen(self.launch_args, **self.kwargs)
 
         # Linux uses mid process
