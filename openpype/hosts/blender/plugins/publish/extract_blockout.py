@@ -42,5 +42,13 @@ class ExtractBlockout(publish.Extractor):
                     collection_data['COLLECTION'],
                     "My asset description"
                 )
+
                 print("project = ", os.environ['AVALON_PROJECT'])
+
+                task_type = kitsu_cred.gazu.task.get_task_type_by_name("Modeling")
+                task = kitsu_cred.gazu.task.new_task(asset, task_type)
+                wip = kitsu_cred.gazu.task.get_task_status_by_short_name("wip")
+
+                comment = kitsu_cred.gazu.task.add_comment(task, wip, "Change status to work in progress")
+
                 print('-----------------')
