@@ -5,6 +5,7 @@ import math, random
 
 from openpype.pipeline import publish
 from openpype.hosts.blender.api import plugin
+from openpype.hosts.blender.api import lib
 from openpype.hosts.blender.api.pipeline import AVALON_PROPERTY
 
 
@@ -25,14 +26,14 @@ class MultiExporter(publish.Extractor):
         print("------------------------")
         bpy.ops.object.select_all(action='DESELECT')
 
-        col_arr = ["_hehe", "_hihi", "hoho"]
-
         selected = []
         asset_group = None
         obj_loc_array = []
+        filepath_array = []
 
         for collection in bpy.data.collections:
-            if collection.name in col_arr:
+
+            if lib.get_collection_parent(collection, True) == 'EXPORT':
                 selected.clear()
 
                 for obj in bpy.data.collections[collection.name].all_objects:
@@ -55,6 +56,7 @@ class MultiExporter(publish.Extractor):
                 mesh_smooth_type='FACE',
                 add_leaf_bones=False
                 )
+                filepath_array.append(filepath)
 
         #Restore Original Object Location
         for obj_data in obj_loc_array:
